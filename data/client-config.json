@@ -1,0 +1,104 @@
+{
+  "CLIENT_CONFIGURATION": {
+    "CLIENT_NAME": "MADOX CONGLOMERATE",
+    "CLIENT_LOGO": "./images/madox-logo.png",
+    "DEFAULT_LAT": 6.5244,
+    "DEFAULT_LNG": 7.4883,
+    "DEFAULT_ZOOM": 12,
+    "ENABLE_AUTH": true,
+    "CURRENCY": "₦",
+    "CONTACT_EMAIL": "info@madoxconglomerate.com",
+    "CONTACT_PHONE": "+234-XXX-XXXX-XXX"
+  },
+  
+  "PORTFOLIO_PROJECTS": [
+    {
+      "PROPERTY_ID": "madox_estate_1",
+      "PROPERTY_NAME": "Madox Gardens Estate",
+      "PROPERTY_TYPE": "Residential Estate", 
+      "PROPERTY_DESCRIPTION": "Premium residential estate with luxury amenities",
+      "PROPERTY_LAT": 6.5200,
+      "PROPERTY_LNG": 7.4800,
+      "PROPERTY_STATUS": "Active Sales",
+      "PROPERTY_IMAGE": "madox-gardens-estate.jpg",
+      "HAS_PARCELS": true,
+      "PROPERTY_ZOOM": 17,
+      "CLIENT_ACCESS_CODE": "MADOX2024",
+      "ENABLE_PRICING": false
+    },
+    {
+      "PROPERTY_ID": "madox_plaza_1", 
+      "PROPERTY_NAME": "Madox Business Plaza",
+      "PROPERTY_TYPE": "Commercial Plaza",
+      "PROPERTY_DESCRIPTION": "Modern commercial plaza with retail and office spaces",
+      "PROPERTY_LAT": 6.5300,
+      "PROPERTY_LNG": 7.4900,
+      "PROPERTY_STATUS": "Leasing Available", 
+      "PROPERTY_IMAGE": "madox-business-plaza.jpg",
+      "HAS_PARCELS": true,
+      "PROPERTY_ZOOM": 18,
+      "CLIENT_ACCESS_CODE": "MADOX2024",
+      "ENABLE_PRICING": true
+    },
+    {
+      "PROPERTY_ID": "madox_event_center",
+      "PROPERTY_NAME": "Madox Event Centre",
+      "PROPERTY_TYPE": "Event Centre",
+      "PROPERTY_DESCRIPTION": "State-of-the-art event venue for weddings and conferences",
+      "PROPERTY_LAT": 6.5150,
+      "PROPERTY_LNG": 7.4750,
+      "PROPERTY_STATUS": "Available for Booking",
+      "PROPERTY_IMAGE": "madox-event-centre.jpg", 
+      "HAS_PARCELS": false,
+      "PROPERTY_ZOOM": 19,
+      "CLIENT_ACCESS_CODE": "MADOX2024",
+      "ENABLE_PRICING": false
+    }
+  ],
+  
+  "SAMPLE_PARCEL_DATA": {
+    "PLOT_NUMBER_PREFIX": "MG",
+    "SAMPLE_PLOTS": [
+      {
+        "PLOT_NUMBER": "MG-001",
+        "PLOT_SIZE": "600 sqm",
+        "PLOT_PRICE": "₦8,500,000",
+        "PLOT_STATUS": "Available",
+        "PLOT_TYPE": "Residential",
+        "PLOT_DIMENSIONS": "20m x 30m",
+        "TITLE_READY": true,
+        "COORDINATES": [
+          [7.4810, 6.5210],
+          [7.4815, 6.5210], 
+          [7.4815, 6.5215],
+          [7.4810, 6.5215],
+          [7.4810, 6.5210]
+        ]
+      },
+      {
+        "PLOT_NUMBER": "MG-002",
+        "PLOT_SIZE": "650 sqm", 
+        "PLOT_PRICE": "₦9,200,000",
+        "PLOT_STATUS": "Reserved",
+        "PLOT_TYPE": "Residential",
+        "PLOT_DIMENSIONS": "22m x 30m",
+        "TITLE_READY": true,
+        "COORDINATES": [
+          [7.4815, 6.5210],
+          [7.4820, 6.5210],
+          [7.4820, 6.5215], 
+          [7.4815, 6.5215],
+          [7.4815, 6.5210]
+        ]
+      }
+    ]
+  },
+  
+  "TEMPLATE_SETTINGS": {
+    "MAP_STYLE": "satellite",
+    "SHOW_LABELS_DEFAULT": true,
+    "AUTO_FIT_BOUNDS": true,
+    "ENABLE_EXPORT": true,
+    "MOBILE_OPTIMIZED": true
+  }
+}

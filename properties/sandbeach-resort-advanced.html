@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+    .az-watermark {
+        position: fixed;
+        top: 140px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 6px 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 1200;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        color: #666;
+        border: 1px solid rgba(44, 95, 63, 0.3);
+        max-width: 200px;
+        opacity: 0.9;
+    }
+    
+    .az-contact {
+        font-weight: bold;
+        color: #2c5f3f;
+        text-decoration: none;
+    }
+    
+    .az-footer {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        background: rgba(44, 95, 63, 0.8);
+        color: white;
+        padding: 4px 8px;
+        font-family: Arial, sans-serif;
+        font-size: 9px;
+        border-radius: 3px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        z-index: 1100;
+        opacity: 0.85;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 20px;
+    }
+    
+    .az-footer a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .az-footer a:hover {
+        text-decoration: underline;
+    }
+    </style>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sandbeach Resort Estate - MADOX HOMES LIMITED | Parcel Vision Pro</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            bottom: 45px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 11px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        select {
+            padding: 6px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 18px;
+            background: white;
+            font-size: 11px;
+            min-width: 100px;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        #map {
+            height: calc(100vh - 120px);
+            width: 100%;
+        }
+        
+        .legend {
+            position: fixed;
+            top: 65px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            font-size: 11px;
+            line-height: 1.6;
+            max-width: 180px;
+            backdrop-filter: blur(10px);
+            z-index: 1200;
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+            color: #2c3e50;
+            border-bottom: 1px solid #3498db;
+            padding-bottom: 3px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 10px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .admin-toggle {
+            position: relative;
+            margin: 8px 0 0 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+            opacity: 0.8;
+            text-align: center;
+        }
+        
+        .admin-toggle:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+        
+        .client-view .admin-toggle {
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 2000;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .sync-status {
+            position: fixed;
+            top: 50px;
+            left: 15px;
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            z-index: 1150;
+            display: none;
+        }
+        
+        .parcel-popup {
+            max-width: 280px;
+            padding: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .parcel-popup h3 {
+            margin: 0 0 12px 0;
+            color: #2c3e50;
+            font-size: 16px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .parcel-popup p {
+            margin: 8px 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-reserved {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-sold {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .parcel-number-toggle {
+            position: absolute;
+            top: 135px;
+            left: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1200;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
+        .parcel-number-toggle:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .parcel-number-toggle.hidden {
+            background: #6c757d;
+        }
+
+        .parcel-label {
+            background: rgba(255,255,255,0.95) !important;
+            border: 1px solid #3498db !important;
+            border-radius: 3px !important;
+            padding: 1px 3px !important;
+            font-weight: 700 !important;
+            font-size: 8px !important;
+            color: #3498db !important;
+            pointer-events: none !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.35) !important;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.8) !important;
+        }
+        
+        .client-login {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .login-form h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .client-only {
+            display: none;
+        }
+        
+        .client-view .client-only {
+            display: block;
+        }
+        
+        .customer-view .client-only {
+            display: none;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 14px;
+            }
+            
+            .header p {
+                font-size: 12px;
+            }
+            
+            .controls {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+            
+            .btn {
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+            
+            .legend {
+                top: 50px;
+                right: 8px;
+                font-size: 9px;
+                max-width: 140px;
+                padding: 6px;
+            }
+            
+            .parcel-number-toggle {
+                top: 80px;
+                left: 8px;
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            
+            #map {
+                height: calc(100vh - 100px);
+            }
+        }
+    </style>
+</head>
+<body class="customer-view">
+    <!-- Sync Status Indicator -->
+    <div class="sync-status" id="syncStatus">📊 Loading resort data...</div>
+    
+    <!-- AZ Watermark -->
+    <div class="az-watermark">
+        <strong>🏗️ AZ PROJECTS LIMITED</strong><br>
+        📞 <a href="tel:+2348033398380" class="az-contact">+234 803 339 8380</a>
+    </div>
+    
+    <!-- Client Login Modal -->
+    <div class="client-login" id="clientLogin">
+        <div class="login-form">
+            <h3>🔐 Client Access</h3>
+            <input type="password" id="clientPassword" placeholder="Enter client password" onkeyup="handleLoginKeyup(event)">
+            <button class="login-btn" onclick="authenticateClient()">Login</button>
+            <button class="login-btn" onclick="closeLogin()" style="background: #6c757d; margin-top: 10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>SANDBEACH RESORT ESTATE</h1>
+        <p>MADOX HOMES LIMITED - Luxury Waterfront Resort Development</p>
+    </div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading Sandbeach Resort subdivision data...</p>
+    </div>
+    
+    <div id="map"></div>
+    
+    <div class="legend">
+        <h4>Plot Status</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #28a745;"></div>
+            <span>Available</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ffc107;"></div>
+            <span>Reserved</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #dc3545;"></div>
+            <span>Sold</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #6c757d;"></div>
+            <span>N/A</span>
+        </div>
+        <!-- Admin Toggle -->
+        <button class="admin-toggle" onclick="toggleView()" id="adminToggle">👤 Admin Access</button>
+    </div>
+    
+    <!-- Parcel Number Toggle -->
+    <button class="parcel-number-toggle" id="parcelToggle" onclick="toggleParcelLabels()">
+        🏷️ Plot Numbers
+    </button>
+    
+    <div class="controls">
+        <div class="control-group">
+            <button class="btn" id="mapBtn" onclick="toggleLayer('map')">🗺️ Map</button>
+            <button class="btn active" id="satelliteBtn" onclick="toggleLayer('satellite')">🛰️ Satellite</button>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn" onclick="locateUser()">📍 My Location</button>
+            <button class="btn" onclick="zoomToProperty()">🏖️ View Resort</button>
+            <button class="btn" onclick="goBackToHub()">🏠 Property Hub</button>
+        </div>
+        
+        <div class="control-group">
+            <input type="text" id="parcelSearch" placeholder="Search plot" style="padding: 4px 8px; border: 2px solid #e9ecef; border-radius: 15px; font-size: 9px; width: auto; min-width: fit-content;" onkeyup="searchParcel(event)" oninput="resizeSearchInput(this)">
+        </div>
+        
+        <div class="control-group client-only admin-panel" style="margin-left: auto;">
+            <label for="parcelSelect" style="color: #2c3e50; font-weight: 600;">🔧 Admin Panel:</label>
+            <select id="parcelSelect" onchange="selectParcel()">
+                <option value="">Select Plot...</option>
+            </select>
+            <select id="statusSelect" onchange="updateParcelStatus()">
+                <option value="available">Available</option>
+                <option value="reserved">Reserved</option>
+                <option value="sold">Sold</option>
+            </select>
+            <button class="btn" onclick="syncData()">🔄 Sync Data</button>
+        </div>
+    </div>
+    
+    <!-- AZ Footer -->
+    <div class="az-footer">
+        <span>Powered by</span>
+        <a href="tel:+2348033398380">AZ PROJECTS LIMITED</a>
+        <span>•</span>
+        <a href="mailto:azprojectslimited@gmail.com">azprojectslimited@gmail.com</a>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <script>
+        // SANDBEACH RESORT CONFIGURATION
+        const PROPERTY_CONFIG = {
+            name: "Sandbeach Resort Estate",
+            center: [6.3756, 7.55966667],
+            zoom: 17,
+            hubUrl: "../index.html"
+        };
+        
+        // Embedded sample parcel data for Sandbeach Resort Estate
+        const subdivisionData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "id": 1,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55956667, 6.3755],
+                            [7.55966667, 6.3755],
+                            [7.55966667, 6.3756],
+                            [7.55956667, 6.3756],
+                            [7.55956667, 6.3755]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S001",
+                        "area": "800 sqm",
+                        "price": "₦45,000,000",
+                        "status": "available",
+                        "type": "waterfront"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 2,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55966667, 6.3755],
+                            [7.55976667, 6.3755],
+                            [7.55976667, 6.3756],
+                            [7.55966667, 6.3756],
+                            [7.55966667, 6.3755]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S002",
+                        "area": "850 sqm",
+                        "price": "₦48,000,000",
+                        "status": "reserved",
+                        "type": "waterfront"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 3,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55976667, 6.3755],
+                            [7.55986667, 6.3755],
+                            [7.55986667, 6.3756],
+                            [7.55976667, 6.3756],
+                            [7.55976667, 6.3755]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S003",
+                        "area": "900 sqm",
+                        "price": "₦52,000,000",
+                        "status": "sold",
+                        "type": "premium waterfront"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 4,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55956667, 6.3756],
+                            [7.55966667, 6.3756],
+                            [7.55966667, 6.3757],
+                            [7.55956667, 6.3757],
+                            [7.55956667, 6.3756]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S004",
+                        "area": "750 sqm",
+                        "price": "₦42,000,000",
+                        "status": "available",
+                        "type": "resort view"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 5,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55966667, 6.3756],
+                            [7.55976667, 6.3756],
+                            [7.55976667, 6.3757],
+                            [7.55966667, 6.3757],
+                            [7.55966667, 6.3756]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S005",
+                        "area": "825 sqm",
+                        "price": "₊46,000,000",
+                        "status": "available",
+                        "type": "resort view"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 6,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.55976667, 6.3756],
+                            [7.55986667, 6.3756],
+                            [7.55986667, 6.3757],
+                            [7.55976667, 6.3757],
+                            [7.55976667, 6.3756]
+                        ]]
+                    },
+                    "properties": {
+                        "plot_number": "S006",
+                        "area": "875 sqm",
+                        "price": "₦50,000,000",
+                        "status": "reserved",
+                        "type": "premium resort view"
+                    }
+                }
+            ]
+        };
+        
+        // Global variables
+        let map;
+        let currentView = 'customer';
+        let isClientAuthenticated = false;
+        let parcelLayers = [];
+        let showParcelLabels = true;
+        let parcelStatus = {};
+        let currentLayer = 'satellite';
+        let userLocationMarker = null;
+        let parcelLabelsLayer = null;
+        
+        const CLIENT_PASSWORD = 'sandbeach2025';
+        
+        // Initialize map on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMap();
+        });
+        
+        function initializeMap() {
+            console.log('Initializing Sandbeach Resort map...');
+            
+            // Create map
+            map = L.map('map').setView(PROPERTY_CONFIG.center, PROPERTY_CONFIG.zoom);
+            
+            // Add satellite layer (default)
+            const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                attribution: '© Google Satellite',
+                maxZoom: 20
+            });
+            
+            // Add map layer
+            const mapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            });
+            
+            // Add default layer
+            satelliteLayer.addTo(map);
+            
+            // Store layers for switching
+            window.mapLayers = {
+                satellite: satelliteLayer,
+                map: mapLayer
+            };
+            
+            // Load parcels
+            loadParcels();
+            
+            // Populate admin dropdown
+            populateParcelDropdown();
+            
+            // Load saved status
+            loadSavedStatus();
+            
+            // Add zoom event listener for responsive labels
+            map.on('zoomend', function() {
+                updateParcelLabels();
+            });
+            
+            // Create initial parcel labels
+            setTimeout(() => {
+                updateParcelLabels();
+            }, 500);
+            
+            // Hide loading screen
+            document.getElementById('loading').style.display = 'none';
+            
+            console.log('Sandbeach Resort map initialization complete!');
+        }
+        
+        function loadParcels() {
+            console.log('Loading Sandbeach Resort parcels...');
+            
+            // Clear existing layers
+            parcelLayers.forEach(layer => map.removeLayer(layer));
+            parcelLayers = [];
+            
+            // Add each parcel as a separate layer
+            subdivisionData.features.forEach((feature, index) => {
+                const parcelId = feature.properties.plot_number;
+                const status = getParcelStatus(parcelId);
+                
+                const layer = L.geoJSON(feature, {
+                    style: {
+                        fillColor: getParcelColor(status),
+                        weight: 2,
+                        opacity: 1,
+                        color: '#ffffff',
+                        dashArray: '3',
+                        fillOpacity: 0.7
+                    },
+                    onEachFeature: function(feature, layer) {
+                        // Create popup
+                        layer.bindPopup(() => createParcelPopup(feature));
+                        
+                        // Highlight on hover
+                        layer.on('mouseover', function() {
+                            layer.setStyle({
+                                weight: 4,
+                                color: '#fff',
+                                dashArray: '',
+                                fillOpacity: 0.9
+                            });
+                        });
+                        
+                        layer.on('mouseout', function() {
+                            layer.setStyle({
+                                weight: 2,
+                                color: '#ffffff',
+                                dashArray: '3',
+                                fillOpacity: 0.7
+                            });
+                        });
+                        
+                        // Double-click to select in admin panel
+                        layer.on('dblclick', function() {
+                            if (isClientAuthenticated) {
+                                const parcelSelect = document.getElementById('parcelSelect');
+                                const statusSelect = document.getElementById('statusSelect');
+                                if (parcelSelect && statusSelect) {
+                                    parcelSelect.value = parcelId;
+                                    statusSelect.value = status;
+                                }
+                            }
+                        });
+                    }
+                }).addTo(map);
+                
+                parcelLayers.push(layer);
+            });
+            
+            // Fit map to parcels
+            if (parcelLayers.length > 0) {
+                const group = new L.featureGroup(parcelLayers);
+                map.fitBounds(group.getBounds(), {padding: [20, 20]});
+            }
+            
+            console.log(`Loaded ${parcelLayers.length} Sandbeach Resort parcels successfully!`);
+        }
+        
+        function createParcelPopup(feature) {
+            const parcelId = feature.properties.plot_number;
+            const area = feature.properties.area;
+            const price = feature.properties.price;
+            const type = feature.properties.type;
+            const status = getParcelStatus(parcelId);
+            const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+            
+            // Calculate center coordinates
+            const parcelBounds = L.geoJSON(feature).getBounds();
+            const parcelCenter = parcelBounds.getCenter();
+            
+            return `
+                <div class="parcel-popup">
+                    <h3>🏖️ Plot ${parcelId}</h3>
+                    <p><strong>🏨 Resort:</strong> Sandbeach Resort Estate</p>
+                    <p><strong>🌊 Type:</strong> ${type}</p>
+                    <p><strong>💰 Price:</strong> ${price}</p>
+                    <p><strong>📐 Area:</strong> ${area}</p>
+                    <p><strong>📊 Status:</strong>
+                        <span class="status-badge status-${status}">${statusLabel}</span>
+                    </p>
+                    <p><strong>📍 Coordinates:</strong> ${parcelCenter.lat.toFixed(6)}, ${parcelCenter.lng.toFixed(6)}</p>
+                    <hr style="margin: 8px 0;">
+                    <div style="text-align: center; margin-top: 8px;">
+                        <button onclick="contactUs('${parcelId}')" 
+                                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+                                       color: white; border: none; padding: 6px 14px; 
+                                       border-radius: 6px; cursor: pointer; font-weight: 600; 
+                                       margin-right: 6px; font-size: 12px;">
+                            📞 Contact Us
+                        </button>
+                        <button onclick="shareProperty('${parcelId}')" 
+                                style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); 
+                                       color: white; border: none; padding: 6px 14px; 
+                                       border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                            📤 Share
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function getParcelStatus(parcelId) {
+            return parcelStatus[parcelId] || subdivisionData.features.find(f => f.properties.plot_number === parcelId)?.properties.status || 'available';
+        }
+        
+        function getParcelColor(status) {
+            switch(status) {
+                case 'available': return '#28a745';
+                case 'reserved': return '#ffc107';
+                case 'sold': return '#dc3545';
+                default: return '#6c757d';
+            }
+        }
+        
+        function populateParcelDropdown() {
+            const select = document.getElementById('parcelSelect');
+            if (!select) return;
+            
+            // Clear existing options except first
+            select.innerHTML = '<option value="">Select Plot...</option>';
+            
+            // Add parcel options
+            subdivisionData.features.forEach((feature) => {
+                const parcelId = feature.properties.plot_number;
+                const option = document.createElement('option');
+                option.value = parcelId;
+                option.textContent = `Plot ${parcelId}`;
+                select.appendChild(option);
+            });
+        }
+        
+        function updateParcelLabels() {
+            // Remove existing labels
+            if (parcelLabelsLayer) {
+                map.removeLayer(parcelLabelsLayer);
+            }
+            
+            if (!showParcelLabels) return;
+            
+            const zoom = map.getZoom();
+            const labels = [];
+            
+            subdivisionData.features.forEach((feature) => {
+                const parcelId = feature.properties.plot_number;
+                const bounds = L.geoJSON(feature).getBounds();
+                const center = bounds.getCenter();
+                
+                const label = L.marker(center, {
+                    icon: L.divIcon({
+                        className: `parcel-label`,
+                        html: parcelId.toString(),
+                        iconSize: [0, 0],
+                        iconAnchor: [0, 0]
+                    }),
+                    interactive: false,
+                    zIndexOffset: 1000
+                });
+                
+                labels.push(label);
+            });
+            
+            parcelLabelsLayer = L.layerGroup(labels).addTo(map);
+        }
+        
+        function toggleParcelLabels() {
+            showParcelLabels = !showParcelLabels;
+            const button = document.getElementById('parcelToggle');
+            
+            if (showParcelLabels) {
+                button.classList.remove('hidden');
+                button.textContent = '🏷️ Plot Numbers';
+                updateParcelLabels();
+            } else {
+                button.classList.add('hidden');
+                button.textContent = '🏷️ Show Numbers';
+                if (parcelLabelsLayer) {
+                    map.removeLayer(parcelLabelsLayer);
+                }
+            }
+        }
+        
+        function toggleLayer(layerType) {
+            // Remove current layer
+            if (currentLayer === 'satellite') {
+                map.removeLayer(window.mapLayers.satellite);
+            } else {
+                map.removeLayer(window.mapLayers.map);
+            }
+            
+            // Add new layer
+            if (layerType === 'satellite') {
+                window.mapLayers.satellite.addTo(map);
+                document.getElementById('satelliteBtn').classList.add('active');
+                document.getElementById('mapBtn').classList.remove('active');
+            } else {
+                window.mapLayers.map.addTo(map);
+                document.getElementById('mapBtn').classList.add('active');
+                document.getElementById('satelliteBtn').classList.remove('active');
+            }
+            
+            currentLayer = layerType;
+        }
+        
+        function locateUser() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Remove existing user location marker
+                    if (userLocationMarker) {
+                        map.removeLayer(userLocationMarker);
+                    }
+                    
+                    // Add user location marker
+                    userLocationMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'user-location',
+                            html: '<div style="width: 12px; height: 12px; background: #ff4444; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 68, 68, 0.6);"></div>',
+                            iconSize: [18, 18],
+                            iconAnchor: [9, 9]
+                        })
+                    }).addTo(map);
+                    
+                    // Pan to user location
+                    map.setView([lat, lng], 16);
+                    
+                    // Show popup
+                    userLocationMarker.bindPopup('📍 Your Location').openPopup();
+                }, function(error) {
+                    alert('Unable to get your location: ' + error.message);
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+        
+        function zoomToProperty() {
+            if (parcelLayers.length > 0) {
+                const group = new L.featureGroup(parcelLayers);
+                map.fitBounds(group.getBounds(), {padding: [20, 20]});
+            }
+        }
+        
+        function goBackToHub() {
+            window.location.href = PROPERTY_CONFIG.hubUrl;
+        }
+        
+        function searchParcel(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            
+            if (event.key === 'Enter' && searchTerm) {
+                // Find matching parcel
+                const feature = subdivisionData.features.find(f => {
+                    const parcelId = f.properties.plot_number.toLowerCase();
+                    return parcelId.includes(searchTerm);
+                });
+                
+                if (feature) {
+                    const bounds = L.geoJSON(feature).getBounds();
+                    map.fitBounds(bounds, {padding: [50, 50]});
+                    
+                    // Find and open popup
+                    parcelLayers.forEach(layer => {
+                        layer.eachLayer(sublayer => {
+                            if (sublayer.feature === feature) {
+                                sublayer.openPopup();
+                            }
+                        });
+                    });
+                } else {
+                    alert('Plot not found. Try searching by plot number (e.g., S001).');
+                }
+            }
+        }
+        
+        function resizeSearchInput(input) {
+            input.style.width = Math.max(120, (input.value.length + 1) * 8) + 'px';
+        }
+        
+        // Client Authentication Functions
+        function toggleView() {
+            if (!isClientAuthenticated) {
+                document.getElementById('clientLogin').style.display = 'flex';
+            } else {
+                currentView = currentView === 'customer' ? 'client' : 'customer';
+                document.body.className = currentView + '-view';
+                document.getElementById('adminToggle').textContent = 
+                    currentView === 'client' ? '👤 Client Mode' : '👤 Admin Access';
+            }
+        }
+        
+        function handleLoginKeyup(event) {
+            if (event.key === 'Enter') {
+                authenticateClient();
+            }
+        }
+        
+        function authenticateClient() {
+            const password = document.getElementById('clientPassword').value;
+            
+            if (password === CLIENT_PASSWORD) {
+                isClientAuthenticated = true;
+                currentView = 'client';
+                document.body.className = 'client-view';
+                document.getElementById('adminToggle').textContent = '👤 Client Mode';
+                closeLogin();
+                
+                // Show success message
+                const popup = L.popup()
+                    .setLatLng(map.getCenter())
+                    .setContent(`
+                        <div style="text-align: center; padding: 10px;">
+                            <h4 style="color: #28a745; margin: 0 0 8px 0;">✅ Authentication Successful</h4>
+                            <p style="margin: 0; font-size: 12px;">Welcome to Sandbeach Resort admin mode. Admin controls are now available.</p>
+                        </div>
+                    `)
+                    .openOn(map);
+                
+                setTimeout(() => {
+                    map.closePopup(popup);
+                }, 3000);
+            } else {
+                alert('Invalid password. Contact MADOX HOMES LIMITED for access.');
+            }
+        }
+        
+        function closeLogin() {
+            document.getElementById('clientLogin').style.display = 'none';
+            document.getElementById('clientPassword').value = '';
+        }
+        
+        // Admin Functions
+        function selectParcel() {
+            const select = document.getElementById('parcelSelect');
+            const statusSelect = document.getElementById('statusSelect');
+            const parcelId = select.value;
+            
+            if (parcelId) {
+                statusSelect.value = getParcelStatus(parcelId);
+                
+                // Find and highlight the parcel
+                const feature = subdivisionData.features.find(f => f.properties.plot_number === parcelId);
+                
+                if (feature) {
+                    const bounds = L.geoJSON(feature).getBounds();
+                    map.fitBounds(bounds, {padding: [50, 50]});
+                }
+            }
+        }
+        
+        function updateParcelStatus() {
+            const parcelSelect = document.getElementById('parcelSelect');
+            const statusSelect = document.getElementById('statusSelect');
+            const parcelId = parcelSelect.value;
+            const newStatus = statusSelect.value;
+            
+            if (parcelId) {
+                parcelStatus[parcelId] = newStatus;
+                
+                // Save to localStorage
+                localStorage.setItem('parcelStatus_SandbeachResort', JSON.stringify(parcelStatus));
+                
+                // Reload parcels to reflect changes
+                loadParcels();
+                updateParcelLabels();
+                
+                // Show success message
+                const popup = L.popup()
+                    .setLatLng(map.getCenter())
+                    .setContent(`
+                        <div style="text-align: center; padding: 10px;">
+                            <h4 style="color: #28a745; margin: 0 0 8px 0;">✅ Status Updated</h4>
+                            <p style="margin: 0; font-size: 12px;">Plot ${parcelId} is now marked as ${newStatus}</p>
+                        </div>
+                    `)
+                    .openOn(map);
+                
+                setTimeout(() => {
+                    map.closePopup(popup);
+                }, 2000);
+            }
+        }
+        
+        function syncData() {
+            const syncStatus = document.getElementById('syncStatus');
+            syncStatus.textContent = '🔄 Syncing Sandbeach Resort data...';
+            syncStatus.style.display = 'block';
+            syncStatus.style.background = '#ffc107';
+            syncStatus.style.color = '#212529';
+            
+            // Simulate sync process
+            setTimeout(() => {
+                syncStatus.textContent = '✅ Sandbeach Resort data synchronized';
+                syncStatus.style.background = '#28a745';
+                syncStatus.style.color = 'white';
+                
+                setTimeout(() => {
+                    syncStatus.style.display = 'none';
+                }, 3000);
+            }, 2000);
+        }
+        
+        // Contact and sharing functions
+        function contactUs(parcelId) {
+            const message = `Hi! I'm interested in Plot ${parcelId} at Sandbeach Resort Estate. Can you provide more information about this luxury waterfront development?`;
+            const phoneNumber = '+2348033398380';
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function shareProperty(parcelId) {
+            const message = `Check out Plot ${parcelId} at Sandbeach Resort Estate - MADOX HOMES LIMITED\n\nLuxury Waterfront Resort Development\nView details: ${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `Plot ${parcelId} - Sandbeach Resort Estate`,
+                    text: message,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    alert('Property details copied to clipboard!');
+                });
+            }
+        }
+        
+        // Load saved parcel status on initialization
+        function loadSavedStatus() {
+            const saved = localStorage.getItem('parcelStatus_SandbeachResort');
+            if (saved) {
+                try {
+                    parcelStatus = JSON.parse(saved);
+                } catch (e) {
+                    console.log('Error loading saved status:', e);
+                    parcelStatus = {};
+                }
+            }
+        }
+        
+        console.log('Sandbeach Resort Parcel Vision Pro initialized successfully!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [7.51350, 6.38150],
+          [7.51380, 6.38150], 
+          [7.51380, 6.38170],
+          [7.51350, 6.38170],
+          [7.51350, 6.38150]
+        ]]
+      },
+      "properties": {
+        "plot_number": "CE-001",
+        "size": "600 sqm",
+        "price": "₦15,000,000",
+        "status": "Available",
+        "type": "Residential Plot"
+      }
+    },
+    {
+      "type": "Feature", 
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [7.51380, 6.38150],
+          [7.51410, 6.38150],
+          [7.51410, 6.38170], 
+          [7.51380, 6.38170],
+          [7.51380, 6.38150]
+        ]]
+      },
+      "properties": {
+        "plot_number": "CE-002",
+        "size": "600 sqm", 
+        "price": "₦15,000,000",
+        "status": "Available",
+        "type": "Residential Plot"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon", 
+        "coordinates": [[
+          [7.51350, 6.38170],
+          [7.51380, 6.38170],
+          [7.51380, 6.38190],
+          [7.51350, 6.38190],
+          [7.51350, 6.38170]
+        ]]
+      },
+      "properties": {
+        "plot_number": "CE-003",
+        "size": "600 sqm",
+        "price": "₦15,000,000", 
+        "status": "Reserved",
+        "type": "Residential Plot"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [7.51380, 6.38170],
+          [7.51410, 6.38170],
+          [7.51410, 6.38190],
+          [7.51380, 6.38190], 
+          [7.51380, 6.38170]
+        ]]
+      },
+      "properties": {
+        "plot_number": "CE-004",
+        "size": "600 sqm",
+        "price": "₦15,000,000",
+        "status": "Sold",
+        "type": "Residential Plot"
+      }
+    }
+  ]
+}

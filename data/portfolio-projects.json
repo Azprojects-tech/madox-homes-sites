@@ -1,0 +1,56 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.51396666666667, 6.38173333333333]
+      },
+      "properties": {
+        "name": "Calvary Estate",
+        "type": "Residential",
+        "description": "Premium residential estate with modern amenities and beautiful landscapes in a serene environment.",
+        "image": "calvary-estate.jpg",
+        "images": ["calvary-estate.jpg", "calvary-estate-2.jpg"],
+        "propertyId": "calvary-estate",
+        "status": "Available",
+        "location": "Enugu, Nigeria",
+        "features": [
+          "Modern Infrastructure",
+          "24/7 Security", 
+          "Good Road Network",
+          "Electricity Supply",
+          "Water Supply",
+          "Green Environment"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.55966666666667, 6.3756]
+      },
+      "properties": {
+        "name": "Sandbeach Resort Estate",
+        "type": "Resort/Residential",
+        "description": "Luxury resort estate offering premium beachside living with world-class amenities and recreational facilities.",
+        "image": "sandbeach-resort.jpg",
+        "images": ["sandbeach-resort.jpg", "sandbeach-resort-2.jpg"],
+        "propertyId": "sandbeach-resort",
+        "status": "Available",
+        "location": "Enugu, Nigeria",
+        "features": [
+          "Beachside Location",
+          "Resort Amenities",
+          "Swimming Pool",
+          "Recreation Center",
+          "24/7 Security",
+          "Modern Infrastructure",
+          "Landscaped Gardens"
+        ]
+      }
+    }
+  ]
+}

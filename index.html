@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Interactive map showcasing MADOX HOMES LIMITED's commercial and residential developments.">
+    <meta name="keywords" content="MADOX HOMES LIMITED, real estate developments, plazas, estates, event centres">
+    <meta name="author" content="MADOX HOMES LIMITED">
+    
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="MADOX HOMES LIMITED Developments">
+    <meta property="og:description" content="Explore MADOX HOMES LIMITED's premium developments - plazas, estates, and event centres with interactive map and image galleries.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./images/madox-featured.jpg">
+    
+    <title>MADOX HOMES LIMITED Developments</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
+    
+    <!-- Preload key project images for faster carousel performance -->
+    <link rel="preload" href="images/madox-gardens-estate.jpg" as="image">
+    <link rel="preload" href="images/madox-business-plaza.jpg" as="image">
+    <link rel="preload" href="images/madox-event-centre.jpg" as="image">
+    
+    <!-- Custom CSS -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 12px;
+        }
+        
+        @media (min-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+        }
+        
+        #map {
+            height: calc(100vh - 90px);
+            width: 100%;
+        }
+        
+        @media (min-width: 768px) {
+            #map {
+                height: calc(100vh - 120px);
+            }
+        }
+        
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            font-size: 12px;
+            line-height: 1.4;
+            max-width: 160px;
+        }
+        
+        @media (min-width: 768px) {
+            .legend {
+                padding: 15px;
+                font-size: 14px;
+                line-height: 1.6;
+                max-width: 200px;
+            }
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        
+        .legend-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .layer-control {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            font-size: 14px;
+        }
+        
+        .popup-content {
+            text-align: center;
+            min-width: 200px;
+            max-width: 280px;
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content {
+                min-width: 250px;
+                max-width: 300px;
+            }
+        }
+        
+        .popup-content h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content h3 {
+                font-size: 16px;
+            }
+        }
+        
+        .popup-content img {
+            max-width: 100%;
+            max-height: 120px;
+            width: auto;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 2px 0 8px 0;
+            object-fit: cover;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (min-width: 480px) {
+            .popup-content img {
+                max-height: 140px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content img {
+                max-height: 160px;
+                border-radius: 8px;
+            }
+        }
+        
+        .popup-content p {
+            font-size: 11px;
+            color: #666;
+            margin: 8px 0;
+            line-height: 1.4;
+            text-align: left;
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content p {
+                font-size: 12px;
+            }
+        }
+        
+        .popup-content .project-type {
+            background: #3498db;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content .project-type {
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+        }
+        
+        .image-carousel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-container {
+                border-radius: 8px;
+            }
+        }
+        
+        .carousel-images {
+            display: flex;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        .carousel-images img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin: 0;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        @media (min-width: 480px) {
+            .carousel-images img {
+                height: 140px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-images img {
+                height: 160px;
+            }
+        }
+        
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .carousel-btn.prev {
+            left: 5px;
+        }
+        
+        .carousel-btn.next {
+            right: 5px;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        
+        .carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-dot {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .carousel-indicators {
+                gap: 5px;
+                margin-top: 8px;
+            }
+        }
+        
+        .carousel-dot.active {
+            background: #3498db;
+        }
+        
+        .image-carousel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-container {
+                border-radius: 8px;
+            }
+        }
+        
+        .carousel-images {
+            display: flex;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        .carousel-images img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin: 0;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-images img {
+                height: 180px;
+            }
+        }
+        
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .carousel-btn.prev {
+            left: 5px;
+        }
+        
+        .carousel-btn.next {
+            right: 5px;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .carousel-dot.active {
+            background: #3498db;
+        }
+        
+        .loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .home-button {
+            position: absolute;
+            top: 70px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        @media (min-width: 768px) {
+            .home-button {
+                top: 80px;
+                width: 34px;
+                height: 34px;
+                font-size: 18px;
+            }
+        }
+        
+        .home-button:hover {
+            background: #f0f0f0;
+            transform: scale(1.1);
+        }
+        
+        .development-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            white-space: pre-line;
+            line-height: 1.1;
+            max-width: 60px;
+            word-wrap: break-word;
+            text-shadow: 
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                0 -1px 0 #000,
+                0 1px 0 #000,
+                -1px 0 0 #000,
+                1px 0 0 #000;
+        }
+        
+        .plaza-marker {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .plaza-marker:before {
+            content: '🏢';
+            font-size: 16px;
+            text-shadow: 
+                -1px -1px 0 #e74c3c,
+                1px -1px 0 #e74c3c,
+                -1px 1px 0 #e74c3c,
+                1px 1px 0 #e74c3c,
+                0 -1px 0 #e74c3c,
+                0 1px 0 #e74c3c,
+                -1px 0 0 #e74c3c,
+                1px 0 0 #e74c3c;
+        }
+        
+        .event-center-marker {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .event-center-marker:before {
+            content: '🎭';
+            font-size: 16px;
+            text-shadow: 
+                -1px -1px 0 #8e44ad,
+                1px -1px 0 #8e44ad,
+                -1px 1px 0 #8e44ad,
+                1px 1px 0 #8e44ad,
+                0 -1px 0 #8e44ad,
+                0 1px 0 #8e44ad,
+                -1px 0 0 #8e44ad,
+                1px 0 0 #8e44ad;
+        }
+        
+        .estate-marker {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .estate-marker:before {
+            content: '🏘️';
+            font-size: 16px;
+            text-shadow: 
+                -1px -1px 0 #27ae60,
+                1px -1px 0 #27ae60,
+                -1px 1px 0 #27ae60,
+                1px 1px 0 #27ae60,
+                0 -1px 0 #27ae60,
+                0 1px 0 #27ae60,
+                -1px 0 0 #27ae60,
+                1px 0 0 #27ae60;
+        }
+        
+        /* Loading animation */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* PVP Integration Styles */
+        .popup-content .pvp-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 8px;
+            width: 100%;
+            transition: background-color 0.2s;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (min-width: 768px) {
+            .popup-content .pvp-button {
+                padding: 8px 16px;
+                font-size: 12px;
+                margin-top: 10px;
+                min-height: 36px;
+            }
+        }
+        
+        .popup-content .pvp-button:hover {
+            background: #c0392b;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 5px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+                letter-spacing: 0.5px;
+            }
+            
+            .header p {
+                font-size: 10px;
+            }
+            
+            #map {
+                height: calc(100vh - 70px);
+            }
+            
+            .legend {
+                padding: 8px;
+                font-size: 10px;
+                max-width: 140px;
+            }
+            
+            .legend h4 {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            
+            .home-button {
+                top: 60px;
+                right: 8px;
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .development-label {
+                font-size: 9px;
+                max-width: 50px;
+            }
+            
+            .popup-content {
+                min-width: 180px;
+                max-width: 260px;
+            }
+            
+            .popup-content h3 {
+                font-size: 13px;
+            }
+            
+            .popup-content img {
+                max-height: 100px;
+            }
+            
+            .popup-content p {
+                font-size: 10px;
+                margin: 6px 0;
+            }
+            
+            .popup-content .project-type {
+                padding: 2px 4px;
+                font-size: 10px;
+            }
+            
+            .popup-content .pvp-button {
+                padding: 6px 10px;
+                font-size: 10px;
+                margin-top: 6px;
+                min-height: 30px;
+            }
+        }
+        
+        /* Tablet Optimizations */
+        @media (min-width: 481px) and (max-width: 767px) {
+            .popup-content img {
+                max-height: 130px;
+            }
+            
+            .development-label {
+                font-size: 9px;
+                max-width: 55px;
+            }
+        }
+        
+        /* Touch-friendly interactions */
+        @media (hover: none) and (pointer: coarse) {
+            .popup-content .pvp-button {
+                min-height: 44px;
+                font-size: 12px;
+            }
+            
+            .home-button {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MADOX HOMES LIMITED DEVELOPMENTS</h1>
+        <p>Interactive Map of Commercial and Residential Projects</p>
+    </div>
+    
+    <div id="map"></div>
+    <div id="loading" class="loading-message">
+        <div class="spinner"></div>
+        <p>Loading map data...</p>
+    </div>
+    <div class="home-button" onclick="goHome()" title="Return to development area">🏠</div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <script>
+        // Show loading message
+        document.getElementById('loading').style.display = 'block';
+        
+        // Portfolio data embedded directly (no external fetch needed)
+        const portfolioData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.51396666666667, 6.38173333333333]
+                    },
+                    "properties": {
+                        "name": "Calvary Estate",
+                        "type": "Residential",
+                        "description": "Premium residential estate with modern amenities and beautiful landscapes in a serene environment.",
+                        "image": "calvary-estate.jpg",
+                        "images": ["calvary-estate.jpg", "calvary-estate-2.jpg"],
+                        "propertyId": "calvary-estate",
+                        "status": "Available",
+                        "location": "Enugu, Nigeria",
+                        "features": [
+                            "Modern Infrastructure",
+                            "24/7 Security", 
+                            "Good Road Network",
+                            "Electricity Supply",
+                            "Water Supply",
+                            "Green Environment"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.55966666666667, 6.3756]
+                    },
+                    "properties": {
+                        "name": "Sandbeach Resort Estate",
+                        "type": "Resort/Residential",
+                        "description": "Luxury resort estate offering premium beachside living with world-class amenities and recreational facilities.",
+                        "image": "sandbeach-resort.jpg",
+                        "images": ["sandbeach-resort.jpg", "sandbeach-resort-2.jpg"],
+                        "propertyId": "sandbeach-resort",
+                        "status": "Available",
+                        "location": "Enugu, Nigeria",
+                        "features": [
+                            "Beachside Location",
+                            "Resort Amenities",
+                            "Swimming Pool",
+                            "Recreation Center",
+                            "24/7 Security",
+                            "Modern Infrastructure",
+                            "Landscaped Gardens"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5698666667, 6.5694666667]
+                    },
+                    "properties": {
+                        "name": "Edem-Nike Estate",
+                        "type": "Residential",
+                        "description": "Modern residential estate in the heart of Edem-Nike with excellent connectivity and contemporary living standards.",
+                        "image": "edem-nike-estate.jpg",
+                        "images": ["edem-nike-estate.jpg", "edem-nike-estate-2.jpg"],
+                        "propertyId": "edem-nike-estate",
+                        "status": "Available",
+                        "location": "Edem-Nike, Enugu, Nigeria",
+                        "features": [
+                            "Strategic Location",
+                            "Modern Infrastructure",
+                            "24/7 Security",
+                            "Good Road Network",
+                            "Electricity Supply",
+                            "Water Supply",
+                            "Commercial Proximity"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5249, 6.45086667]
+                    },
+                    "properties": {
+                        "name": "Nza Street Hotel",
+                        "type": "Commercial/Hospitality",
+                        "description": "Premium hospitality establishment on Nza Street offering modern accommodations and excellent service in the heart of Enugu.",
+                        "image": "nza-street-hotel.jpg",
+                        "images": ["nza-street-hotel.jpg", "nza-street-hotel-2.jpg"],
+                        "propertyId": "nza-street-hotel",
+                        "status": "Available",
+                        "location": "Nza Street, Enugu, Nigeria",
+                        "features": [
+                            "Central Location",
+                            "Modern Facilities",
+                            "24/7 Room Service",
+                            "Conference Rooms",
+                            "Restaurant & Bar",
+                            "Parking Available",
+                            "Business Center"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5751833333, 6.4588166667]
+                    },
+                    "properties": {
+                        "name": "Lady Mabel Estate",
+                        "type": "Residential",
+                        "description": "Elegant residential estate named after Lady Mabel, offering premium living spaces with sophisticated design and excellent amenities.",
+                        "image": "lady-mabel-estate.jpg",
+                        "images": ["lady-mabel-estate.jpg", "lady-mabel-estate-2.jpg"],
+                        "propertyId": "lady-mabel-estate",
+                        "status": "Available",
+                        "location": "Enugu, Nigeria",
+                        "features": [
+                            "Premium Location",
+                            "Elegant Design",
+                            "24/7 Security",
+                            "Modern Infrastructure",
+                            "Landscaped Gardens",
+                            "Good Road Network",
+                            "Water & Electricity"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5259500000, 6.3928666667]
+                    },
+                    "properties": {
+                        "name": "Madox Centenary Estate",
+                        "type": "Residential",
+                        "description": "Flagship centenary estate representing 100 years of excellence in real estate development by MADOX HOMES LIMITED.",
+                        "image": "madox-centenary-estate.jpg",
+                        "images": ["madox-centenary-estate.jpg", "madox-centenary-estate-2.jpg"],
+                        "propertyId": "madox-centenary-estate",
+                        "status": "Available",
+                        "location": "Enugu, Nigeria",
+                        "features": [
+                            "Flagship Development",
+                            "Centenary Legacy",
+                            "Premium Infrastructure",
+                            "24/7 Security",
+                            "Smart Home Technology",
+                            "Recreational Facilities",
+                            "Green Spaces"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5066833333, 6.4708166667]
+                    },
+                    "properties": {
+                        "name": "Zoo Estate",
+                        "type": "Residential",
+                        "description": "Nature-themed residential estate located near the zoo area, offering a unique living experience surrounded by natural beauty and wildlife-inspired amenities.",
+                        "image": "zoo-estate.jpg",
+                        "images": ["zoo-estate.jpg", "zoo-estate-2.jpg"],
+                        "propertyId": "zoo-estate",
+                        "status": "Available",
+                        "location": "Zoo Area, Enugu, Nigeria",
+                        "features": [
+                            "Nature-Themed Design",
+                            "Wildlife-Inspired Amenities",
+                            "Green Living Spaces",
+                            "24/7 Security",
+                            "Park Access",
+                            "Family-Friendly Environment",
+                            "Modern Infrastructure"
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [7.5577166667, 6.3781166667]
+                    },
+                    "properties": {
+                        "name": "Sandeach Estate Extension",
+                        "type": "Residential",
+                        "description": "Premium estate extension building on the success of the original Sandbeach Resort, offering expanded residential options with enhanced amenities and modern design.",
+                        "image": "sandeach-estate-extension.jpg",
+                        "images": ["sandeach-estate-extension.jpg", "sandeach-estate-extension-2.jpg"],
+                        "propertyId": "sandeach-estate-extension",
+                        "status": "Available",
+                        "location": "Enugu, Nigeria",
+                        "features": [
+                            "Extension Development",
+                            "Enhanced Amenities",
+                            "Modern Design",
+                            "24/7 Security",
+                            "Premium Infrastructure",
+                            "Recreational Facilities",
+                            "Landscaped Environment"
+                        ]
+                    }
+                }
+            ]
+        };
+
+        // Load project data (now using embedded data)
+        let projectsData = portfolioData;
+        
+        // Load project data (now using embedded data)
+        async function loadProjectData() {
+            console.log('Using embedded portfolio data...');
+            console.log('Successfully loaded portfolio data:', projectsData);
+            console.log(`Loaded ${projectsData.features.length} properties`);
+            return projectsData;
+        }
+        
+        // Calculate bounds for all projects
+        function calculateBounds() {
+            let minLat = Infinity, maxLat = -Infinity;
+            let minLng = Infinity, maxLng = -Infinity;
+            
+            projectsData.features.forEach(feature => {
+                const [lng, lat] = feature.geometry.coordinates;
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+            });
+            
+            // Add padding
+            const latPadding = (maxLat - minLat) * 0.1;
+            const lngPadding = (maxLng - minLng) * 0.1;
+            
+            return [
+                [minLat - latPadding, minLng - lngPadding],
+                [maxLat + latPadding, maxLng + lngPadding]
+            ];
+        }
+        
+        // Create boundary with 500m offset
+        function createBoundary() {
+            let minLat = Infinity, maxLat = -Infinity;
+            let minLng = Infinity, maxLng = -Infinity;
+            
+            projectsData.features.forEach(feature => {
+                const [lng, lat] = feature.geometry.coordinates;
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+            });
+            
+            // Convert 500m to degrees (approximate)
+            const meterToDegree = 500 / 111000; // roughly 500m in degrees
+            
+            // Create boundary coordinates with 500m offset
+            const boundaryCoords = [
+                [minLat - meterToDegree, minLng - meterToDegree],
+                [minLat - meterToDegree, maxLng + meterToDegree],
+                [maxLat + meterToDegree, maxLng + meterToDegree],
+                [maxLat + meterToDegree, minLng - meterToDegree],
+                [minLat - meterToDegree, minLng - meterToDegree]
+            ];
+            
+            return L.polyline(boundaryCoords, {
+                color: '#e74c3c',
+                weight: 3,
+                dashArray: '10, 10',
+                opacity: 0.8,
+                fillOpacity: 0
+            });
+        }
+        
+        // Initialize map
+        let map, boundary;
+        
+        async function initializeMap() {
+            // Load project data first
+            projectsData = await loadProjectData();
+            
+            const bounds = calculateBounds();
+            map = L.map('map', {
+                zoomControl: window.innerWidth > 768,
+                attributionControl: true,
+                preferCanvas: true
+            }).fitBounds(bounds);
+            
+            // Add zoom control for mobile in better position
+            if (window.innerWidth <= 768) {
+                L.control.zoom({
+                    position: 'bottomleft'
+                }).addTo(map);
+            }
+            
+            // Create and add boundary
+            boundary = createBoundary();
+            boundary.addTo(map);
+            
+            // Base layers
+            const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                attribution: '© Google Satellite',
+                maxZoom: 20
+            });
+            
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            });
+            
+            // Add default layer
+            satelliteLayer.addTo(map);
+            
+            // Function to get icon based on project type
+            function getProjectIcon(projectName, type) {
+                const name = projectName.toLowerCase();
+                const typeL = type.toLowerCase();
+                
+                if (name.includes('plaza') || typeL.includes('commercial')) {
+                    return L.divIcon({
+                        className: 'custom-icon',
+                        html: '<div class="plaza-marker"></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+                } else if (name.includes('event centre') || name.includes('event center')) {
+                    return L.divIcon({
+                        className: 'custom-icon',
+                        html: '<div class="event-center-marker"></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+                } else {
+                    // Default to estate marker for residential or other types
+                    return L.divIcon({
+                        className: 'custom-icon',
+                        html: '<div class="estate-marker"></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+                }
+            }
+            
+            // Function to create popup content
+            function createPopupContent(properties, type) {
+                const projectName = properties.name;
+                const carouselId = 'carousel-' + Math.random().toString(36).substr(2, 9);
+                
+                // Get images from properties or fallback to single image
+                let images = [];
+                if (properties.images && properties.images.length > 0) {
+                    images = properties.images.map(imageName => ({
+                        src: `images/${imageName}`,
+                        alt: `${projectName} View`
+                    }));
+                } else if (properties.image) {
+                    images = [{ src: `images/${properties.image}`, alt: `${projectName} Main View` }];
+                } else {
+                    images = [{ src: 'images/placeholder.svg', alt: 'No image available' }];
+                }
+                
+                const imageElements = images.map((img, index) => 
+                    `<img src="${img.src}" alt="${img.alt}" 
+                          loading="${index === 0 ? 'eager' : 'lazy'}"
+                          decoding="async"
+                          onerror="this.style.display='none';" />`
+                ).join('');
+                
+                const dots = images.map((_, index) => 
+                    `<span class="carousel-dot ${index === 0 ? 'active' : ''}" 
+                           onclick="goToSlide('${carouselId}', ${index})"></span>`
+                ).join('');
+                
+                return `
+                    <div class="popup-content">
+                        <h3>${projectName}</h3>
+                        <div class="image-carousel">
+                            <div class="carousel-container" id="${carouselId}">
+                                <div class="carousel-images">
+                                    ${imageElements}
+                                </div>
+                                <button class="carousel-btn prev" onclick="moveCarousel('${carouselId}', -1)">‹</button>
+                                <button class="carousel-btn next" onclick="moveCarousel('${carouselId}', 1)">›</button>
+                            </div>
+                            <div class="carousel-indicators">
+                                ${dots}
+                            </div>
+                        </div>
+                        <p>${properties.description}</p>
+                        <div class="project-type">${type}</div>
+                        <button class="pvp-button" onclick="openPVP('${properties.propertyId}')">
+                            🔍 View Property Details (PVP)
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Add projects to map
+            const projectsLayer = L.layerGroup();
+            const projectLabels = L.layerGroup();
+            
+            projectsData.features.forEach(feature => {
+                const [lng, lat] = feature.geometry.coordinates;
+                const properties = feature.properties;
+                const icon = getProjectIcon(properties.name, properties.type);
+                
+                const marker = L.marker([lat, lng], { icon: icon });
+                
+                // Create responsive popup with better mobile handling
+                const popupOptions = {
+                    maxWidth: window.innerWidth < 768 ? 260 : 300,
+                    minWidth: window.innerWidth < 768 ? 200 : 250,
+                    className: 'property-popup',
+                    closeButton: true,
+                    autoPan: true,
+                    autoPanPadding: [10, 10]
+                };
+                
+                marker.bindPopup(createPopupContent(properties, properties.type), popupOptions);
+                projectsLayer.addLayer(marker);
+                
+                // Add label (shown at zoom 12+) - slight offset like Enugu Projects
+                const label = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'development-label',
+                        html: properties.name,
+                        iconSize: [60, 20],
+                        iconAnchor: [30, -5]
+                    })
+                });
+                projectLabels.addLayer(label);
+            });
+            
+            projectsLayer.addTo(map);
+            
+            // Add zoom event listener for labels
+            map.on('zoomend', function() {
+                if (map.getZoom() >= 12) {
+                    if (!map.hasLayer(projectLabels)) {
+                        projectLabels.addTo(map);
+                    }
+                } else {
+                    if (map.hasLayer(projectLabels)) {
+                        map.removeLayer(projectLabels);
+                    }
+                }
+            });
+            
+            // Initial label visibility check
+            if (map.getZoom() >= 12) {
+                projectLabels.addTo(map);
+            }
+            
+            // Layer control
+            const baseLayers = {
+                "Google Satellite": satelliteLayer,
+                "OpenStreetMap": osmLayer
+            };
+            
+            const overlayLayers = {
+                "MADOX Projects": projectsLayer,
+                "Development Boundary": boundary
+            };
+            
+            L.control.layers(baseLayers, overlayLayers).addTo(map);
+            
+            // Custom legend
+            const legend = L.control({ position: 'bottomright' });
+            
+            legend.onAdd = function(map) {
+                const commercialCount = projectsData.features.filter(f => 
+                    f.properties.type.toLowerCase().includes('commercial') || 
+                    f.properties.name.toLowerCase().includes('plaza')
+                ).length;
+                
+                const eventCount = projectsData.features.filter(f => 
+                    f.properties.name.toLowerCase().includes('event')
+                ).length;
+                
+                const residentialCount = projectsData.features.filter(f => 
+                    f.properties.type.toLowerCase().includes('residential') || 
+                    f.properties.name.toLowerCase().includes('estate')
+                ).length;
+                
+                const div = L.DomUtil.create('div', 'legend');
+                div.innerHTML = `
+                    <h4>Project Types</h4>
+                    ${commercialCount > 0 ? `
+                    <div class="legend-item">
+                        <div class="plaza-marker" style="width: 16px; height: 16px; margin-right: 8px; transform: scale(0.8);"></div>
+                        Commercial (${commercialCount})
+                    </div>` : ''}
+                    ${eventCount > 0 ? `
+                    <div class="legend-item">
+                        <div class="event-center-marker" style="width: 16px; height: 16px; margin-right: 8px; transform: scale(0.8);"></div>
+                        Event Centre (${eventCount})
+                    </div>` : ''}
+                    ${residentialCount > 0 ? `
+                    <div class="legend-item">
+                        <div class="estate-marker" style="width: 16px; height: 16px; margin-right: 8px; transform: scale(0.8);"></div>
+                        Residential (${residentialCount})
+                    </div>` : ''}
+                    <div style="margin-top: 8px; font-size: 10px; color: #666;">
+                        Names show at zoom 12+
+                    </div>
+                `;
+                return div;
+            };
+            
+            legend.addTo(map);
+            
+            // Add scale control
+            L.control.scale().addTo(map);
+        }
+        
+        // Home button function - zoom to boundary
+        function goHome() {
+            if (boundary) {
+                map.fitBounds(boundary.getBounds(), { padding: [5, 5] });
+            }
+        }
+        
+        // PVP Integration Function
+        function openPVP(propertyId) {
+            // Map property IDs to actual advanced PVP file names
+            const pvpFileMap = {
+                'calvary-estate': 'calvary-estate-advanced.html',
+                'sandbeach-resort': 'sandbeach-resort-advanced.html',
+                'edem-nike-estate': 'edem-nike-estate-advanced.html',
+                'lady-mabel-estate': 'lady-mabel-estate-advanced.html',
+                'sandeach-estate-extension': 'sandeach-estate-extension.html',
+                'madox-centenary-estate': 'madox-centenary-estate.html',
+                'zoo-estate': 'zoo-estate.html',
+                'nza-street-hotel': 'nza-street-hotel.html'
+            };
+            
+            // Get the correct file name or fallback to default
+            const fileName = pvpFileMap[propertyId] || `${propertyId}.html`;
+            const pvpUrl = `./properties/${fileName}`;
+            
+            // Try to open in same tab first, fallback to new tab if needed
+            try {
+                window.location.href = pvpUrl;
+            } catch (error) {
+                // Fallback to new tab
+                window.open(pvpUrl, '_blank');
+            }
+        }
+        
+        // Global carousel functions
+        let carouselStates = {};
+        
+        function moveCarousel(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+            
+            const totalSlides = carousel.querySelectorAll('.carousel-images img').length;
+            
+            if (!carouselStates[carouselId]) {
+                carouselStates[carouselId] = { currentSlide: 0, totalSlides: totalSlides };
+            }
+            
+            const state = carouselStates[carouselId];
+            state.currentSlide += direction;
+            
+            if (state.currentSlide >= state.totalSlides) {
+                state.currentSlide = 0;
+            } else if (state.currentSlide < 0) {
+                state.currentSlide = state.totalSlides - 1;
+            }
+            
+            updateCarousel(carouselId);
+        }
+        
+        function goToSlide(carouselId, slideIndex) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+            
+            const totalSlides = carousel.querySelectorAll('.carousel-images img').length;
+            
+            if (!carouselStates[carouselId]) {
+                carouselStates[carouselId] = { currentSlide: 0, totalSlides: totalSlides };
+            }
+            
+            carouselStates[carouselId].currentSlide = slideIndex;
+            updateCarousel(carouselId);
+        }
+        
+        function updateCarousel(carouselId) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+            
+            const state = carouselStates[carouselId];
+            const imagesContainer = carousel.querySelector('.carousel-images');
+            const dots = carousel.parentElement.querySelectorAll('.carousel-dot');
+            
+            // Use requestAnimationFrame for smoother transitions
+            requestAnimationFrame(() => {
+                // Move images with hardware acceleration
+                const translateX = -state.currentSlide * 100;
+                imagesContainer.style.transform = `translate3d(${translateX}%, 0, 0)`;
+                
+                // Update dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === state.currentSlide);
+                });
+                
+                // Preload next/previous images
+                preloadAdjacentImages(carousel, state.currentSlide);
+            });
+        }
+        
+        // Preload adjacent images for smoother transitions
+        function preloadAdjacentImages(carousel, currentSlide) {
+            const images = carousel.querySelectorAll('.carousel-images img');
+            const totalImages = images.length;
+            
+            // Preload next and previous images
+            const nextSlide = (currentSlide + 1) % totalImages;
+            const prevSlide = (currentSlide - 1 + totalImages) % totalImages;
+            
+            [nextSlide, prevSlide].forEach(slideIndex => {
+                const img = images[slideIndex];
+                if (img && !img.complete) {
+                    const tempImg = new Image();
+                    tempImg.src = img.src;
+                }
+            });
+        }
+        
+        // Make functions global
+        window.goHome = goHome;
+        window.openPVP = openPVP;
+        
+        // Initialize everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMap().then(() => {
+                // Hide loading message when map is ready
+                setTimeout(function() {
+                    document.getElementById('loading').style.display = 'none';
+                }, 500);
+            });
+        });
+        
+        console.log('MADOX HOMES LIMITED Map loaded successfully');
+    </script>
+</body>
+</html>

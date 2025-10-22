@@ -1,0 +1,32 @@
+# Redirects for Madox Homes Sites
+
+# Property shortcuts
+/calvary              /properties/calvary-estate-advanced.html              200
+/sandbeach            /properties/sandbeach-resort-advanced.html            200
+/edem-nike            /properties/edem-nike-estate-advanced.html            200
+/lady-mabel           /properties/lady-mabel-estate-advanced.html           200
+/sandeach             /properties/sandeach-estate-extension.html            200
+/madox-centenary      /properties/madox-centenary-estate.html               200
+/zoo-estate           /properties/zoo-estate.html                           200
+/nza-hotel            /properties/nza-street-hotel.html                     200
+
+# Property with advanced suffix
+/calvary-advanced     /properties/calvary-estate-advanced.html              200
+/sandbeach-advanced   /properties/sandbeach-resort-advanced.html            200
+/edem-nike-advanced   /properties/edem-nike-estate-advanced.html            200
+/lady-mabel-advanced  /properties/lady-mabel-estate-advanced.html           200
+
+# Generic property routes
+/property/:slug       /properties/:slug.html                                200
+
+# Legacy routes support
+/calvary-estate       /properties/calvary-estate-advanced.html              301
+/sandbeach-resort     /properties/sandbeach-resort-advanced.html            301
+/edem-nike-estate     /properties/edem-nike-estate-advanced.html            301
+/lady-mabel-estate    /properties/lady-mabel-estate-advanced.html           301
+
+# Error handling
+/404                  /index.html                                            404
+
+# SPA fallback
+/*                    /index.html                                            200

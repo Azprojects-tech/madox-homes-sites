@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MADOX HOMES LIMITED - Nza Street Hotel | Parcel Vision Pro</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        /* ==================== HEADER SECTION ==================== */
+        .main-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo-section h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .logo-section .tagline {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* ==================== CONTENT LAYOUT ==================== */
+        .main-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+        
+        .map-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .map-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        
+        .map-header h2 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+        
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-top: 4px solid #e74c3c;
+        }
+        
+        .info-card h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+        
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .property-details {
+            margin: 15px 0;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .detail-value {
+            color: #333;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .features-list li {
+            background: #f8f9fa;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #e74c3c;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+            
+            #map {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-buttons {
+                justify-content: center;
+            }
+            
+            .main-container {
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-section h1 {
+                font-size: 1.4em;
+            }
+            
+            .nav-btn {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+            
+            .info-card {
+                padding: 15px;
+            }
+            
+            #map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== HEADER ==================== -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <h1>🏢 MADOX HOMES LIMITED</h1>
+                <div class="tagline">Nza Street Hotel - Parcel Vision Pro</div>
+            </div>
+            <nav class="nav-buttons">
+                <a href="../index.html" class="nav-btn">🏠 Portfolio Hub</a>
+                <a href="#" class="nav-btn" onclick="downloadData()">📊 Download Data</a>
+                <a href="#" class="nav-btn" onclick="shareLocation()">📱 Share</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-container">
+        <!-- Map Section -->
+        <div class="map-section">
+            <div class="map-header">
+                <h2>🗺️ Nza Street Hotel - Interactive Location Map</h2>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Property Information -->
+            <div class="info-card">
+                <h3>🏨 Hotel Information</h3>
+                <img src="../images/nza-street-hotel.jpg" alt="Nza Street Hotel" class="property-image">
+                
+                <div class="property-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Hotel Name:</span>
+                        <span class="detail-value">Nza Street Hotel</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Type:</span>
+                        <span class="detail-value">Commercial/Hospitality</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">Nza Street, Enugu, Nigeria</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Coordinates:</span>
+                        <span class="detail-value">6°27.052'N, 7°31.494'E</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">Available</span>
+                    </div>
+                </div>
+
+                <h4>🌟 Hotel Features:</h4>
+                <ul class="features-list">
+                    <li>📍 Central Location</li>
+                    <li>🏨 Modern Facilities</li>
+                    <li>🛎️ 24/7 Room Service</li>
+                    <li>🏢 Conference Rooms</li>
+                    <li>🍽️ Restaurant & Bar</li>
+                    <li>🚗 Parking Available</li>
+                    <li>💼 Business Center</li>
+                </ul>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-card">
+                <h3>📊 Hotel Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">120</div>
+                        <div class="stat-label">Guest Rooms</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Floors</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Star Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Service</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ==================== LEAFLET JAVASCRIPT ==================== -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+
+    <script>
+        // Initialize the map centered on Nza Street Hotel
+        const map = L.map('map').setView([6.45086667, 7.5249], 16);
+
+        // Add satellite tile layer (Google Satellite as primary)
+        const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            attribution: '© Google Satellite',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Add OpenStreetMap as alternative
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        });
+
+        // Layer control
+        const baseMaps = {
+            "🛰️ Satellite View": satelliteLayer,
+            "🗺️ Street Map": osmLayer
+        };
+        L.control.layers(baseMaps).addTo(map);
+
+        // Hotel location marker
+        const hotelMarker = L.marker([6.45086667, 7.5249], {
+            title: 'Nza Street Hotel'
+        }).addTo(map);
+
+        hotelMarker.bindPopup(`
+            <div style="text-align: center; padding: 10px;">
+                <h3 style="margin: 0 0 10px 0; color: #2c3e50;">🏨 Nza Street Hotel</h3>
+                <img src="../images/nza-street-hotel.jpg" style="width: 100%; max-width: 200px; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                <p style="margin: 5px 0; color: #555;"><strong>Type:</strong> Commercial/Hospitality</p>
+                <p style="margin: 5px 0; color: #555;"><strong>Location:</strong> Nza Street, Enugu, Nigeria</p>
+                <p style="margin: 10px 0 0 0;">
+                    <a href="#" style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-size: 0.9em;">
+                        📋 View Details
+                    </a>
+                </p>
+            </div>
+        `);
+
+        // Sample floor areas/zones (you can customize these)
+        const sampleZones = [
+            {
+                name: "Main Building",
+                coords: [
+                    [6.45080, 7.52480],
+                    [6.45090, 7.52480],
+                    [6.45090, 7.52500],
+                    [6.45080, 7.52500]
+                ],
+                status: "Active",
+                description: "Guest Rooms & Reception"
+            },
+            {
+                name: "Restaurant Wing", 
+                coords: [
+                    [6.45085, 7.52470],
+                    [6.45095, 7.52470],
+                    [6.45095, 7.52485],
+                    [6.45085, 7.52485]
+                ],
+                status: "Active",
+                description: "Dining & Bar Area"
+            },
+            {
+                name: "Conference Center",
+                coords: [
+                    [6.45075, 7.52490],
+                    [6.45085, 7.52490],
+                    [6.45085, 7.52510],
+                    [6.45075, 7.52510]
+                ],
+                status: "Active",
+                description: "Meeting & Event Rooms"
+            }
+        ];
+
+        // Add zone polygons
+        sampleZones.forEach(zone => {
+            const color = '#3498db';
+            
+            const polygon = L.polygon(zone.coords, {
+                color: color,
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.3
+            }).addTo(map);
+
+            polygon.bindPopup(`
+                <div style="text-align: center; padding: 8px;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50;">${zone.name}</h4>
+                    <p style="margin: 3px 0;"><strong>Status:</strong> 
+                        <span style="color: ${color};">${zone.status}</span>
+                    </p>
+                    <p style="margin: 3px 0;"><strong>Description:</strong> ${zone.description}</p>
+                    <button style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 5px;">ℹ️ More Info</button>
+                </div>
+            `);
+        });
+
+        // Add scale control
+        L.control.scale({
+            position: 'bottomright',
+            metric: true,
+            imperial: false
+        }).addTo(map);
+
+        // Utility functions
+        function downloadData() {
+            const data = {
+                hotel: "Nza Street Hotel",
+                coordinates: "6°27.052'N, 7°31.494'E",
+                type: "Commercial/Hospitality",
+                zones: sampleZones.length,
+                rooms: 120,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nza-street-hotel-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function shareLocation() {
+            const url = window.location.href;
+            const text = "Check out Nza Street Hotel on MADOX HOMES LIMITED - Parcel Vision Pro";
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Nza Street Hotel',
+                    text: text,
+                    url: url
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
+                    alert('Location link copied to clipboard!');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

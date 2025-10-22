@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+    .az-watermark {
+        position: fixed;
+        top: 140px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 6px 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 1200;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        color: #666;
+        border: 1px solid rgba(44, 95, 63, 0.3);
+        max-width: 200px;
+        opacity: 0.9;
+    }
+    
+    .az-logo {
+        width: 40px;
+        height: auto;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    
+    .az-contact {
+        font-weight: bold;
+        color: #2c5f3f;
+        text-decoration: none;
+    }
+    
+    .az-footer {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        background: rgba(44, 95, 63, 0.8);
+        color: white;
+        padding: 4px 8px;
+        font-family: Arial, sans-serif;
+        font-size: 9px;
+        border-radius: 3px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        z-index: 1100;
+        opacity: 0.85;
+        text-align: center;
+    }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            bottom: 45px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 11px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn.active {
+            background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%);
+            box-shadow: 0 4px 15px rgba(32, 178, 170, 0.4);
+        }
+        
+        select {
+            padding: 6px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 18px;
+            background: white;
+            font-size: 11px;
+            min-width: 100px;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #20b2aa;
+        }
+        
+        #map {
+            width: 100%;
+            height: calc(100vh - 220px);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10000;
+            color: white;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Client Login Modal */
+        .client-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+        
+        .login-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .login-content h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .login-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .login-content input:focus {
+            outline: none;
+            border-color: #20b2aa;
+        }
+        
+        .login-content button {
+            width: 100%;
+            padding: 12px;
+            background: #20b2aa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        
+        .login-content button:hover {
+            background: #008b8b;
+        }
+        
+        /* Admin Panel - Only visible to authenticated clients */
+        body.customer-view .admin-only {
+            display: none !important;
+        }
+        
+        body.client-view .admin-only {
+            display: block;
+        }
+        
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .controls {
+                padding: 10px 15px;
+                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .btn {
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+            
+            select {
+                font-size: 10px;
+                padding: 5px 10px;
+                min-width: 80px;
+            }
+            
+            #map {
+                height: calc(100vh - 280px);
+            }
+            
+            .header h1 {
+                font-size: 14px;
+            }
+            
+            .header p {
+                font-size: 12px;
+            }
+        }
+        
+        /* Attribution toggle */
+        #attributionToggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Hide attribution by default */
+        .leaflet-control-attribution {
+            display: none !important;
+        }
+        
+        /* Show attribution when toggled */
+        body.show-attribution .leaflet-control-attribution {
+            display: block !important;
+        }
+    </style>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <title>🏡 MADOX MINI ESTATE - Sandeach Estate Extension | Interactive Property Map</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore premium plots at Madox Mini Estate - Sandeach Estate Extension. Interactive property map with real-time availability, pricing, and contact information.">
+    <meta name="keywords" content="Madox Mini Estate, Sandeach Estate Extension, property, land, plots, real estate, Nigeria, Enugu">
+</head>
+<body class="customer-view">
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; font-size: 18px;">Loading Madox Mini Estate...</p>
+        <p style="font-size: 14px; opacity: 0.8;">Preparing interactive property map</p>
+    </div>
+
+    <!-- Attribution Toggle -->
+    <button id="attributionToggle" onclick="toggleAttribution()" title="Show Attribution">ℹ️</button>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🏡 MADOX MINI ESTATE - Sandeach Estate Extension</h1>
+        <p>Premium extension development with verified coordinates • Real-time availability • Professional support</p>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <button id="mapBtn" class="btn" onclick="toggleLayer('map')">🗺️ Map</button>
+            <button id="satelliteBtn" class="btn active" onclick="toggleLayer('satellite')">🛰️ Satellite</button>
+            <button class="btn" onclick="toggleLandView()" id="landBtn">🗺️ Land</button>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn" onclick="locateUser()">📍 My Location</button>
+            <button class="btn" onclick="zoomToSubdivision()">🏘️ View Estate</button>
+        </div>
+
+        <div class="control-group">
+            <input type="text" id="parcelSearch" placeholder="Search parcel (e.g., P1)" 
+                   onkeyup="searchParcel(event)" 
+                   oninput="resizeSearchInput(this)" 
+                   style="padding: 6px 12px; border: 2px solid #e9ecef; border-radius: 18px; 
+                          font-size: 11px; width: 80px; transition: width 0.3s ease;">
+        </div>
+
+        <!-- Admin Panel - Only visible to authenticated clients -->
+        <div class="control-group admin-only">
+            <select id="parcelSelect" onchange="selectParcel()">
+                <option value="">Select Parcel...</option>
+            </select>
+            <select id="statusSelect">
+                <option value="available">Available</option>
+                <option value="reserved">Reserved</option>
+                <option value="sold">Sold</option>
+            </select>
+            <button class="btn" onclick="updateParcelStatus()">📝 Update</button>
+        </div>
+
+        <div class="control-group admin-only">
+            <button class="btn" onclick="syncWithRealGoogleSheets()">🔄 Admin Sync</button>
+            <button class="btn" onclick="testGoogleSheetsConnection()">🔍 Test Connection</button>
+            <button class="btn" onclick="showDatabasePanel()">🗃️ Database</button>
+        </div>
+
+        <div class="control-group">
+            <button id="adminToggle" class="btn" onclick="toggleView()">👑 Admin</button>
+        </div>
+    </div>
+
+    <!-- Client Login Modal -->
+    <div id="clientLogin" class="client-login" style="display: none;">
+        <div class="login-content">
+            <h3>🔐 Admin Access</h3>
+            <p>Enter admin password to access property management tools:</p>
+            <input type="password" id="clientPassword" placeholder="Admin Password" onkeyup="handleLoginKeyup(event)">
+            <button onclick="authenticateClient()">🔓 Login</button>
+            <button onclick="closeLogin()" style="background: #6c757d;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- A&Z Projects Watermark -->
+    <div class="az-watermark">
+        <div style="display: flex; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #2c5f3f;">A&Z Projects Ltd</strong>
+        </div>
+        <div style="font-size: 10px; line-height: 1.3;">
+            🇬🇧 UK: <a href="tel:+447887969508" class="az-contact">+44 788 796 9508</a><br>
+            🇳🇬 NG: <a href="tel:+2348068086806" class="az-contact">+234 806 808 6806</a><br>
+            📧 <a href="mailto:info@azprojectsltd.com" class="az-contact">info@azprojectsltd.com</a>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // WGS84 COORDINATE SYSTEM - Sandeach Estate Extension
+        const subdivisionData = {
+            "type": "FeatureCollection",
+            "name": "Sandeach_Estate_Extension_WGS84",
+            "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+            "features": [
+                {
+                    "type": "Feature",
+                    "id": 0,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.559653282000048, 6.37900806700002],
+                            [7.559638031000052, 6.378757081000027],
+                            [7.55966173400005, 6.378754442000032],
+                            [7.559662653000051, 6.378857628000054],
+                            [7.559673657000048, 6.379006271000058],
+                            [7.559653282000048, 6.37900806700002]
+                        ]]
+                    },
+                    "properties": {
+                        "Text": "P01",
+                        "area": "672 sqm",
+                        "price": "₦12,000,000",
+                        "status": "Available"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 1,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.559673657000048, 6.379006271000058],
+                            [7.559662653000051, 6.378857628000054],
+                            [7.559677904000047, 6.378855809000047],
+                            [7.559688907000045, 6.379004451000062],
+                            [7.559673657000048, 6.379006271000058]
+                        ]]
+                    },
+                    "properties": {
+                        "Text": "P02",
+                        "area": "685 sqm",
+                        "price": "₦12,000,000",
+                        "status": "Available"
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "id": 2,
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [7.559688907000045, 6.379004451000062],
+                            [7.559677904000047, 6.378855809000047],
+                            [7.559693155000052, 6.378853990000042],
+                            [7.559704157000049, 6.379002632000044],
+                            [7.559688907000045, 6.379004451000062]
+                        ]]
+                    },
+                    "properties": {
+                        "Text": "P03",
+                        "area": "685 sqm",
+                        "price": "₦12,000,000",
+                        "status": "Available"
+                    }
+                }
+            ]
+        };
+
+        // Global variables
+        let map;
+        let parcelLayers = [];
+        let currentBaseLayer = 'satellite';
+        let parcelStatus = {};
+        let googleSheetsData = {};
+        let parcelDatabase = {};
+        
+        // Initialize the map
+        function initMap() {
+            console.log("Initializing Sandeach Estate Extension map...");
+            
+            // Calculate bounds of the subdivision
+            const bounds = L.geoJSON(subdivisionData).getBounds();
+            const center = bounds.getCenter();
+            
+            // Create map with increased zoom limits
+            map = L.map('map', {
+                maxZoom: 25,
+                minZoom: 10
+            }).setView([center.lat, center.lng], 18);
+            
+            // Base layers with increased maxZoom
+            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles © Esri',
+                maxZoom: 25,
+                maxNativeZoom: 20
+            });
+            
+            // Add initial layer
+            satelliteLayer.addTo(map);
+            
+            // Add parcels to map
+            loadParcels();
+            
+            // Zoom to subdivision
+            map.fitBounds(bounds, { padding: [20, 20] });
+            
+            // Hide loading screen
+            document.getElementById('loading').style.display = 'none';
+            
+            console.log("Map initialization complete!");
+        }
+        
+        // Load parcels function
+        function loadParcels() {
+            console.log("Loading parcels...");
+            
+            // Clear existing layers
+            parcelLayers.forEach(layer => map.removeLayer(layer));
+            parcelLayers = [];
+            
+            // Add each parcel as a separate layer
+            subdivisionData.features.forEach((feature, index) => {
+                const parcelId = feature.properties.Text.trim();
+                
+                const layer = L.geoJSON(feature, {
+                    style: {
+                        fillColor: '#20b2aa',
+                        weight: 2,
+                        opacity: 1,
+                        color: '#ffffff',
+                        dashArray: '3',
+                        fillOpacity: 0.7
+                    },
+                    onEachFeature: function(feature, layer) {
+                        layer.bindPopup(createParcelPopup(feature));
+                        
+                        // Highlight on hover
+                        layer.on('mouseover', function() {
+                            layer.setStyle({
+                                weight: 4,
+                                color: '#fff',
+                                dashArray: '',
+                                fillOpacity: 0.9
+                            });
+                        });
+                        
+                        layer.on('mouseout', function() {
+                            layer.setStyle({
+                                weight: 2,
+                                color: '#ffffff',
+                                dashArray: '3',
+                                fillOpacity: 0.7
+                            });
+                        });
+                    }
+                }).addTo(map);
+                
+                parcelLayers.push(layer);
+            });
+            
+            console.log(`Loaded ${parcelLayers.length} parcels successfully!`);
+        }
+        
+        // Create parcel popup content
+        function createParcelPopup(feature) {
+            const parcelId = feature.properties.Text.trim();
+            return `
+                <div style="text-align: center; min-width: 200px;">
+                    <h3 style="margin: 0 0 10px 0; color: #20b2aa; font-size: 16px;">🏡 ${feature.properties.Text}</h3>
+                    <p style="margin: 5px 0; font-size: 13px;"><strong>💰 Price:</strong> ${feature.properties.price}</p>
+                    <p style="margin: 5px 0; font-size: 13px;"><strong>📐 Area:</strong> ${feature.properties.area}</p>
+                    <p style="margin: 5px 0; font-size: 13px;"><strong>📊 Status:</strong> ${feature.properties.status}</p>
+                    <hr style="margin: 8px 0;">
+                    <div style="text-align: center; margin-top: 8px;">
+                        <button onclick="contactUsDirectly('${parcelId}')" 
+                                style="background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%); 
+                                       color: white; border: none; padding: 6px 14px; 
+                                       border-radius: 6px; cursor: pointer; font-weight: 600; 
+                                       margin-right: 6px; font-size: 12px;">
+                            📞 Contact Us
+                        </button>
+                        <button onclick="shareOnWhatsApp('${parcelId}')" 
+                                style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); 
+                                       color: white; border: none; padding: 6px 14px; 
+                                       border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                            📤 Share
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Toggle layer function
+        function toggleLayer(layerType) {
+            const mapBtn = document.getElementById('mapBtn');
+            const satelliteBtn = document.getElementById('satelliteBtn');
+            
+            // Remove only tile layers, preserve GeoJSON layers
+            map.eachLayer(layer => {
+                if (layer._url && (layer._url.includes('openstreetmap') || layer._url.includes('arcgisonline'))) {
+                    map.removeLayer(layer);
+                }
+            });
+            
+            if (layerType === 'map') {
+                const mapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                });
+                mapLayer.addTo(map);
+                
+                mapBtn.classList.add('active');
+                satelliteBtn.classList.remove('active');
+                currentBaseLayer = 'map';
+            } else if (layerType === 'satellite') {
+                const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles © Esri',
+                    maxZoom: 19
+                });
+                satelliteLayer.addTo(map);
+                
+                satelliteBtn.classList.add('active');
+                mapBtn.classList.remove('active');
+                currentBaseLayer = 'satellite';
+            }
+            
+            // Force map refresh for mobile
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+        }
+        
+        // Contact functions
+        function contactUsDirectly(parcelId) {
+            const message = `🏡 INQUIRY - Madox Mini Estate - Sandeach Estate Extension%0A%0A📍 Interested in: Parcel ${parcelId}%0A💰 Listed Price: ₦12,000,000%0A%0A👋 Hi! I'm interested in this parcel. Please provide more information.`;
+            window.open(`https://wa.me/2348039921371?text=${message}`, '_blank');
+        }
+        
+        function shareOnWhatsApp(parcelId) {
+            const message = `🏡 Check out this property at Madox Mini Estate - Sandeach Estate Extension!%0A%0A📍 Parcel: ${parcelId}%0A💰 Price: ₦12,000,000%0A🌟 Premium extension development with excellent amenities%0A%0A🗺️ View interactive map: ${window.location.href}`;
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        }
+        
+        // Search function
+        function searchParcel(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            
+            if (event.key === 'Enter' && searchTerm) {
+                const feature = subdivisionData.features.find(f => 
+                    f.properties.Text.toLowerCase().trim().includes(searchTerm)
+                );
+                
+                if (feature) {
+                    const bounds = L.geoJSON(feature).getBounds();
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                    
+                    // Open popup for found parcel
+                    parcelLayers.forEach(layer => {
+                        layer.eachLayer(sublayer => {
+                            if (sublayer.feature && 
+                                sublayer.feature.properties.Text.toLowerCase().trim().includes(searchTerm)) {
+                                sublayer.openPopup();
+                            }
+                        });
+                    });
+                } else {
+                    alert('Parcel not found. Try searching for "P1", "P2", etc.');
+                }
+            }
+        }
+        
+        // User location
+        let userLocationMarker = null;
+        
+        function locateUser() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Remove existing user marker if it exists
+                    if (userLocationMarker) {
+                        map.removeLayer(userLocationMarker);
+                    }
+                    
+                    // Add user location marker
+                    userLocationMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'user-location-pin',
+                            html: `<div style="color: #ff0000; font-size: 24px;">📍</div>`,
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 24]
+                        })
+                    }).addTo(map);
+                    
+                    userLocationMarker.bindPopup(`
+                        <div style="text-align: center;">
+                            <h3 style="color: #ff0000;">📍 Your Location</h3>
+                            <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
+                            <p><strong>Longitude:</strong> ${lng.toFixed(6)}</p>
+                        </div>
+                    `).openPopup();
+                    
+                    // Center map on user location
+                    map.setView([lat, lng], Math.max(map.getZoom(), 16));
+                }, function(error) {
+                    alert('Unable to get your location. Please enable location services.');
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+        
+        // Zoom to subdivision
+        function zoomToSubdivision() {
+            const bounds = L.geoJSON(subdivisionData).getBounds();
+            map.fitBounds(bounds, { padding: [20, 20] });
+            
+            // Show popup message
+            setTimeout(() => {
+                const popup = L.popup()
+                    .setLatLng(map.getCenter())
+                    .setContent(`
+                        <div style="text-align: center; padding: 10px;">
+                            <h4 style="color: #20b2aa; margin: 0 0 8px 0;">🏘️ Viewing Sandeach Estate Extension</h4>
+                            <p style="margin: 0; font-size: 12px;">Premium extension development</p>
+                        </div>
+                    `)
+                    .openOn(map);
+                
+                // Auto-close popup after 3 seconds
+                setTimeout(() => {
+                    map.closePopup(popup);
+                }, 3000);
+            }, 500);
+        }
+        
+        // Land view toggle
+        let landViewActive = false;
+        
+        function toggleLandView() {
+            const landBtn = document.getElementById('landBtn');
+            landViewActive = !landViewActive;
+            
+            if (landViewActive) {
+                parcelLayers.forEach(layer => {
+                    if (layer.setStyle) {
+                        layer.setStyle({
+                            fillOpacity: 0.05,
+                            opacity: 0.9
+                        });
+                    }
+                });
+                landBtn.classList.add('active');
+                landBtn.innerHTML = '🗺️ Land ✓';
+            } else {
+                parcelLayers.forEach(layer => {
+                    if (layer.setStyle) {
+                        layer.setStyle({
+                            fillOpacity: 0.7,
+                            opacity: 1
+                        });
+                    }
+                });
+                landBtn.classList.remove('active');
+                landBtn.innerHTML = '🗺️ Land';
+            }
+        }
+        
+        // Auto-resize search input
+        function resizeSearchInput(input) {
+            const span = document.createElement('span');
+            span.style.visibility = 'hidden';
+            span.style.position = 'absolute';
+            span.style.fontSize = window.getComputedStyle(input).fontSize;
+            span.style.fontFamily = window.getComputedStyle(input).fontFamily;
+            span.style.padding = '0';
+            span.style.margin = '0';
+            span.style.whiteSpace = 'nowrap';
+            
+            const text = input.value || input.placeholder;
+            span.textContent = text;
+            
+            document.body.appendChild(span);
+            const textWidth = span.offsetWidth;
+            document.body.removeChild(span);
+            
+            input.style.width = Math.max(textWidth + 20, 80) + 'px';
+        }
+        
+        // Admin functions
+        let currentView = 'customer';
+        let isClientAuthenticated = false;
+        const CLIENT_PASSWORD = 'sandeach2025';
+        
+        function toggleView() {
+            if (currentView === 'customer') {
+                document.getElementById('clientLogin').style.display = 'flex';
+                document.getElementById('clientPassword').focus();
+            } else {
+                switchToCustomerView();
+            }
+        }
+        
+        function authenticateClient() {
+            const password = document.getElementById('clientPassword').value;
+            if (password === CLIENT_PASSWORD) {
+                isClientAuthenticated = true;
+                switchToClientView();
+                closeLogin();
+            } else {
+                alert('❌ Incorrect password. Please try again.');
+                document.getElementById('clientPassword').value = '';
+                document.getElementById('clientPassword').focus();
+            }
+        }
+        
+        function handleLoginKeyup(event) {
+            if (event.key === 'Enter') {
+                authenticateClient();
+            }
+        }
+        
+        function closeLogin() {
+            document.getElementById('clientLogin').style.display = 'none';
+            document.getElementById('clientPassword').value = '';
+        }
+        
+        function switchToClientView() {
+            currentView = 'client';
+            document.body.className = 'client-view';
+            document.getElementById('adminToggle').textContent = '👤 Customer';
+        }
+        
+        function switchToCustomerView() {
+            currentView = 'customer';
+            isClientAuthenticated = false;
+            document.body.className = 'customer-view';
+            document.getElementById('adminToggle').textContent = '👑 Admin';
+        }
+        
+        // Placeholder admin functions
+        function selectParcel() { 
+            console.log('Select parcel function - Sandeach Estate Extension'); 
+        }
+        
+        function updateParcelStatus() { 
+            console.log('Update parcel status function - Sandeach Estate Extension'); 
+        }
+        
+        function syncWithRealGoogleSheets() { 
+            console.log('Sync with Google Sheets function - Sandeach Estate Extension'); 
+            alert('🔄 Google Sheets sync functionality will be configured for Sandeach Estate Extension database.');
+        }
+        
+        function testGoogleSheetsConnection() { 
+            console.log('Test Google Sheets connection function - Sandeach Estate Extension'); 
+            alert('🔍 Google Sheets connection test for Sandeach Estate Extension.');
+        }
+        
+        function showDatabasePanel() { 
+            console.log('Show database panel function - Sandeach Estate Extension'); 
+            alert('🗃️ Database panel for Sandeach Estate Extension will display property records.');
+        }
+        
+        // Attribution toggle
+        let attributionVisible = false;
+        
+        function toggleAttribution() {
+            attributionVisible = !attributionVisible;
+            const attributionToggle = document.getElementById('attributionToggle');
+            
+            if (attributionVisible) {
+                document.body.classList.add('show-attribution');
+                attributionToggle.textContent = '❓';
+                attributionToggle.title = 'Hide Attribution';
+            } else {
+                document.body.classList.remove('show-attribution');
+                attributionToggle.textContent = 'ℹ️';
+                attributionToggle.title = 'Show Attribution';
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Page loaded, initializing Sandeach Estate Extension...");
+            initMap();
+            
+            // Initialize search input size
+            const searchInput = document.getElementById('parcelSearch');
+            if (searchInput) {
+                resizeSearchInput(searchInput);
+            }
+        });
+    </script>
+    
+    <!-- Sync Status Display -->
+    <div id="syncStatus" style="display: none; position: fixed; top: 20px; left: 20px; right: 20px; z-index: 9999; margin: 0 auto; max-width: 600px;"></div>
+    
+    <div class="az-footer">
+        <span>A&Z Projects Ltd | UK: <a href="tel:+447887969508">+44 788 796 9508</a> | NG: <a href="tel:+2348068086806">+234 806 808 6806</a> | <a href="mailto:info@azprojectsltd.com">info@azprojectsltd.com</a></span>
+    </div>
+</body>
+</html>
