@@ -574,6 +574,17 @@
             hubUrl: "../index.html"
         };
         
+        // Improved home button function
+        function goBackToHub() {
+            // Try relative path first, fallback to absolute paths
+            try {
+                window.location.href = PROPERTY_CONFIG.hubUrl;
+            } catch (error) {
+                // Fallback for deployed environments
+                window.location.href = "/";
+            }
+        }
+        
         // Embedded sample parcel data for Lady Mabel Estate
         const subdivisionData = {
             "type": "FeatureCollection",

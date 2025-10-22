@@ -348,6 +348,7 @@
         <div class="control-group">
             <button class="btn" onclick="locateUser()">📍 My Location</button>
             <button class="btn" onclick="zoomToSubdivision()">🏘️ View Estate</button>
+            <button class="btn" onclick="goBackToHub()">🏠 Property Hub</button>
         </div>
 
         <div class="control-group">
@@ -747,6 +748,15 @@
                     map.closePopup(popup);
                 }, 3000);
             }, 500);
+        }
+        
+        // Go back to Property Hub
+        function goBackToHub() {
+            try {
+                window.location.href = "../index.html";
+            } catch (error) {
+                window.location.href = "/";
+            }
         }
         
         // Land view toggle

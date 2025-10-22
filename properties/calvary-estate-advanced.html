@@ -574,6 +574,17 @@
             hubUrl: "../index.html"
         };
         
+        // Improved home button function
+        function goBackToHub() {
+            // Try relative path first, fallback to absolute paths
+            try {
+                window.location.href = PROPERTY_CONFIG.hubUrl;
+            } catch (error) {
+                // Fallback for deployed environments
+                window.location.href = "/";
+            }
+        }
+        
         // Embedded sample parcel data for Calvary Estate
         const subdivisionData = {
             "type": "FeatureCollection",
@@ -1031,9 +1042,7 @@
             }
         }
         
-        function goBackToHub() {
-            window.location.href = PROPERTY_CONFIG.hubUrl;
-        }
+        // This function was moved above, removing duplicate
         
         function searchParcel(event) {
             const searchTerm = event.target.value.toLowerCase();

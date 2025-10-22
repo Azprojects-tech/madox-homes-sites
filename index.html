@@ -1050,10 +1050,11 @@
             boundary = createBoundary();
             boundary.addTo(map);
             
-            // Base layers
-            const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                attribution: '© Google Satellite',
-                maxZoom: 20
+            // Base layers - using more reliable satellite sources
+            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri | Satellite Imagery',
+                maxZoom: 20,
+                maxNativeZoom: 18
             });
             
             const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1061,7 +1062,7 @@
                 maxZoom: 19
             });
             
-            // Add default layer
+            // Add default satellite layer immediately
             satelliteLayer.addTo(map);
             
             // Function to get icon based on project type
@@ -1204,18 +1205,21 @@
                 projectLabels.addTo(map);
             }
             
-            // Layer control
+            // Layer control with improved styling
             const baseLayers = {
-                "Google Satellite": satelliteLayer,
-                "OpenStreetMap": osmLayer
+                "🛰️ Satellite View": satelliteLayer,
+                "🗺️ Street Map": osmLayer
             };
             
             const overlayLayers = {
-                "MADOX Projects": projectsLayer,
-                "Development Boundary": boundary
+                "🏘️ MADOX Properties": projectsLayer,
+                "🏢 Development Boundary": boundary
             };
             
-            L.control.layers(baseLayers, overlayLayers).addTo(map);
+            const layerControl = L.control.layers(baseLayers, overlayLayers, {
+                position: 'topright',
+                collapsed: false
+            }).addTo(map);
             
             // Custom legend
             const legend = L.control({ position: 'bottomright' });
